@@ -56,24 +56,82 @@ export const constantRoutes = [
   },
 
   {
-    path: '/example',
+    path: '/agreement',
     component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
+    redirect: '/agreement/create',
+    name: 'Agreement',
+    meta: { title: '用户协议', icon: 'el-icon-s-help' },
     children: [
       {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
+        path: 'create',
+        name: 'CreateAgreement',
+        component: () => import('@/views/agreement/create'),
+        meta: { title: '添加协议', icon: 'tree' },
+        hidden: true
       },
       {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
+        path: 'list',
+        name: 'AgreementList',
+        component: () => import('@/views/agreement/list'),
+        meta: { title: '协议列表', icon: 'table' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/agreement/edit'),
+        name: 'EditAgreement',
+        meta: { title: '编辑协议', noCache: true, activeMenu: '/agreement/list' },
+        hidden: true
+      },
+    ]
+  },
+
+  {
+    path: '/consult',
+    component: Layout,
+    redirect: '/consult/list',
+    name: 'Consult',
+    meta: { title: '参考', icon: 'el-icon-s-help' },
+    children: [
+      {
+        path: 'create-type',
+        name: 'CreateConsultType',
+        component: () => import('@/views/consult/create-type'),
+        meta: { title: '添加分类' },
+        hidden: true
+      },
+      {
+        path: 'type-list',
+        name: 'ConsultTypeList',
+        component: () => import('@/views/consult/type-list'),
+        meta: { title: '分类列表', icon: 'table' }
+      },
+      {
+        path: 'edit-type/:id(\\d+)',
+        component: () => import('@/views/consult/edit-type'),
+        name: 'EditConsultType',
+        meta: { title: '编辑分类', noCache: true, activeMenu: '/consult/type-list' },
+        hidden: true
+      },
+      {
+        path: 'create',
+        name: 'CreateConsult',
+        component: () => import('@/views/consult/create'),
+        meta: { title: '添加参考', icon: 'tree' },
+        hidden: true
+      },
+      {
+        path: 'list',
+        name: 'ConsultList',
+        component: () => import('@/views/consult/list'),
+        meta: { title: '参考列表', icon: 'table' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/consult/edit'),
+        name: 'EditConsult',
+        meta: { title: '编辑参考', noCache: true, activeMenu: '/consult/list' },
+        hidden: true
+      },
     ]
   },
 
@@ -89,6 +147,8 @@ export const constantRoutes = [
       }
     ]
   },
+
+
 
   {
     path: '/nested',
