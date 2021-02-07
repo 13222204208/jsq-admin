@@ -9,10 +9,18 @@ export function storeConsult(params) {
   })
 }
 
-export function consultList() {
+export function consultList(query) {
   return request({
     url: '/consult',
-    method: 'get'
+    method: 'get',
+    params: query
+  })
+}
+
+export function delConsult(id) {
+  return request({
+    url: '/consult/'+id,
+    method: 'delete',
   })
 }
 
@@ -23,10 +31,10 @@ export function editConsult(id) {
   })
 }
 
-export function updateConsult(id, content) {
+export function updateConsult(id, params) {
   return request({
     url: '/consult/'+id,
     method: 'patch',
-    params:{'content':content}
+    params:params
   })
 }
