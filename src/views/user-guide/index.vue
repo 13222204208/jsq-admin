@@ -1,28 +1,8 @@
 <template>
  <div class="app-container">
 <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-  <el-form-item label="分类名称" prop="consult_type_id">
-    <el-select v-model="form.consult_type_id" placeholder="请选择分类" style="width: 58rem;">
-      <el-option v-for='item in option' :key='item.id' :value='item.id' :label='item.title'>  			</el-option>
-    </el-select>
-  </el-form-item>
 
-  <el-form-item label="文章封面" prop="cover">
-      <el-upload
-        name="upload"
-        :action="uploadUrl()"
-        list-type="picture-card"
-        :limit='1'
-        :on-success="handleUpSuccess"
-        :on-preview="handlePictureCardPreview"
-        :on-remove="handleRemove">
-        <i class="el-icon-plus"></i>
-      </el-upload>
-      <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
-      </el-dialog>
 
-  </el-form-item>
   <el-form-item label="文章标题" prop="title">
     <el-input v-model="form.title" style="width: 58rem;"></el-input>
   </el-form-item>
@@ -36,7 +16,7 @@
     </div>
     <br>
   <el-form-item>
-    <el-button type="primary" @click="onSubmit">立即创建</el-button>
+    <el-button type="primary" @click="onSubmit">更新保存</el-button>
 <!--     <el-button>取消</el-button> -->
   </el-form-item>
 </el-form>
@@ -48,8 +28,8 @@
 <script>
 import CKEditor from '@ckeditor/ckeditor5-build-decoupled-document'
 import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/zh-cn'
-import { storeConsult } from '@/api/consult'
-import { ConsultTypeList} from '@/api/consult-type'
+import { userGuide, updateUserGuide } from '@/api/user-guide'
+
 export default {
   data() {
     const validateTitle = (rule, value, callback) => {
@@ -62,9 +42,9 @@ export default {
     return {
       editor:null,//编辑器实例
       form:{
+        id:'',
         title:'',
-        cover:'',
-        content:''
+        content:'',
       },
         rules: {
           title: [
@@ -72,42 +52,39 @@ export default {
           ],
         },
       option:[],
+      imgFilesList:[],
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img"
     }
   },
   mounted() {
     this.initCKEditor()
   },
   created() {
-    this.getList()
+    this.fetchData()
   },
 
-  methods: {
-    getList(){
-      ConsultTypeList().then( response=>{
-        this.option = response.data;
 
+  methods: {
+
+
+    fetchData() {
+      userGuide().then(response => {console.log(response);
+        this.editor.setData(response.data.content);
+        this.form.title= response.data.title;
+        this.form.id = response.data.id;
+      }).catch(err => {
+        console.log(err)
       })
     },
-    uploadUrl() {
-        var url = process.env.VUE_APP_BASE_API+"/upload/img"// 生产环境和开发环境的判断
-        return url
-    },
-      handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
+
+
       handlePictureCardPreview(file) { console.log(file.url)
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
       },
-      handleUpSuccess(response){
 
-          if(response.uploaded == true){
-            this.form.cover = response.url;
-            console.log(this.form.cover);
-          }
-      },
 
     initCKEditor(){
       CKEditor.create(document.querySelector("#editor"),{
@@ -133,13 +110,12 @@ export default {
     onSubmit(){
       this.form.content = this.editor.getData();//富文本内容
 
-      console.log(this.form);
-      storeConsult(this.form).then(response => {
+      updateUserGuide(this.form.id,this.form).then(response => {
           this.$message({
-            message: '创建成功',
+            message: '更新成功',
             type: 'success'
           })
-          this.$router.push({name:'ConsultList'})
+
         }
       );
     }

@@ -1,13 +1,9 @@
 <template>
  <div class="app-container">
 <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-  <el-form-item label="分类名称" prop="consult_type_id">
-    <el-select v-model="form.consult_type_id" placeholder="请选择分类" style="width: 58rem;">
-      <el-option v-for='item in option' :key='item.id' :value='item.id' :label='item.title'>  			</el-option>
-    </el-select>
-  </el-form-item>
 
-  <el-form-item label="文章封面" prop="cover">
+
+  <el-form-item label="标记图标" prop="icon">
       <el-upload
         name="upload"
         :action="uploadUrl"
@@ -24,18 +20,10 @@
       </el-dialog>
 
   </el-form-item>
-  <el-form-item label="文章标题" prop="title">
+  <el-form-item label="标记名称" prop="title">
     <el-input v-model="form.title" style="width: 58rem;"></el-input>
   </el-form-item>
-    <div class="ckeditor" style="margin-left:10px; width:1000px">
-      <!-- 工具栏容器 -->
-      <div id="toolbar-container"></div>
-      <!-- 编辑器容器 -->
-      <div id="editor">
 
-      </div>
-    </div>
-    <br>
   <el-form-item>
     <el-button type="primary" @click="onSubmit">更新保存</el-button>
 <!--     <el-button>取消</el-button> -->
@@ -49,13 +37,13 @@
 <script>
 import CKEditor from '@ckeditor/ckeditor5-build-decoupled-document'
 import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/zh-cn'
-import { editConsult, updateConsult } from '@/api/consult'
-import { ConsultTypeList} from '@/api/consult-type'
+import { editTab, updateTab } from '@/api/tab'
+
 export default {
   data() {
     const validateTitle = (rule, value, callback) => {
       if (!value) {
-        callback(new Error('请输入标题'))
+        callback(new Error('请输入标名称'))
       } else {
         callback()
       }
@@ -65,9 +53,7 @@ export default {
       form:{
         id:'',
         title:'',
-        cover:'',
-        content:'',
-        consult_type_id:null
+        icon:'',
       },
         rules: {
           title: [
@@ -81,39 +67,27 @@ export default {
       uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img"
     }
   },
-  mounted() {
-    this.initCKEditor()
-  },
+
   created() {
-    this.getList()
     const id = this.$route.params && this.$route.params.id
     this.fetchData(id)
   },
 
 
   methods: {
-    getList(){
-      ConsultTypeList().then( response=>{
-        this.option = response.data;
-
-      })
-    },
 
     fetchData(id) {
-      editConsult(id).then(response => {
-        this.editor.setData(response.data.content);
+      editTab(id).then(response => {
         this.form.title= response.data.title;
-        
+
         var str=process.env.VUE_APP_BASE_API;
          var  leg= str.indexOf('api');
            var url= str.substr(0,leg);
-           
            this.imgFilesList.push({
-             "url": url+response.data.cover,
+             "url": url+response.data.icon,
            });
-        this.form.consult_type_id = response.data.consult_type_id;
         this.form.id = response.data.id;
-        this.form.cover = response.data.cover;
+        this.form.icon = response.data.icon;
       }).catch(err => {
         console.log(err)
       })
@@ -129,41 +103,20 @@ export default {
       handleUpSuccess(response){
 
           if(response.uploaded == true){
-            this.form.cover = response.url;
-            console.log(this.form.cover);
+            this.form.icon = response.url;
+            console.log(this.form.icon);
           }
       },
 
-    initCKEditor(){
-      CKEditor.create(document.querySelector("#editor"),{
-        language: 'zh-cn',
-        ckfinder:{
-          // 后端处理上传逻辑返回json数据,包括uploaded(选项true/false)和url两个字段
-          uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img",
-        }
-      }).then(editor => {console.log(editor);
-        const toolbarContainer = document.querySelector('#toolbar-container');
-        toolbarContainer.appendChild(editor.ui.view.toolbar.element);
-        // 将编辑器保存起来，用来随时获取编辑器中的内容等，执行一些操作
-        this.editor = editor;
-      }).catch(error => {
-        console.log(error)
-      });
-    },
-    /*获取编辑器内容*/
-    getHtml(){
-      console.log(this.editor.getData());
-    },
 
     onSubmit(){
-      this.form.content = this.editor.getData();//富文本内容
 
-      updateConsult(this.form.id,this.form).then(response => {
+      updateTab(this.form.id,this.form).then(response => {
           this.$message({
-            message: '创建成功',
+            message: '更新成功',
             type: 'success'
           })
-          this.$router.push({name:'ConsultList'})
+          this.$router.push({name:'TabList'})
         }
       );
     }

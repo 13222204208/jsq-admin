@@ -160,6 +160,19 @@ export const constantRoutes = [
       }
     ]
   },
+  
+  {
+    path: '/position',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'Position',
+        component: () => import('@/views/position/index'),
+        meta: { title: '位置列表', icon: 'table' }
+      }
+    ]
+  },
 
   {
     path: '/notepad',
@@ -173,6 +186,60 @@ export const constantRoutes = [
       }
     ]
   },
+
+  {
+    path: '/triage',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'Triage',
+        component: () => import('@/views/triage/index'),
+        meta: { title: '检伤分类', icon: 'table' }
+      }
+    ]
+  },
+
+  {
+    path: '/user-guide',
+    component: Layout,
+    children: [
+      {
+        path: 'content',
+        name: 'UserGuide',
+        component: () => import('@/views/user-guide/index'),
+        meta: { title: '用户指南', icon: 'el-icon-male' }
+      }
+    ]
+  },
+
+  {
+    path: '/tab',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'TabList',
+        component: () => import('@/views/tab/index'),
+        meta: { title: '标记', icon: 'table' },
+        hidden: true
+      },
+      {
+        path: 'create',
+        name: 'CreateTab',
+        component: () => import('@/views/tab/create'),
+        hidden: true
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/tab/edit'),
+        name: 'EditTab',
+        meta: { title: '编辑标记', noCache: true, activeMenu: '/tab/index' },
+        hidden: true
+      },
+    ]
+  },
+
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

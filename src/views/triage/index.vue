@@ -22,46 +22,48 @@
          <span>{{ row.id }}</span>
        </template>
      </el-table-column>
+     <el-table-column label="轻伤人数" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.minor_wound+" 人" }}</span>
+       </template>
+     </el-table-column>
 
-     <el-table-column label="标题" align="center">
+     <el-table-column label="中度伤人数" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.title }}</span>
+         <span>{{ row.moderate_wound+" 人" }}</span>
        </template>
      </el-table-column>
-    <el-table-column label="内容" align="center">
+
+     <el-table-column label="重伤人数" align="center">
        <template slot-scope="{row}">
-                 <el-popover trigger="hover" placement="top">
-                   <p>{{ row.content }}</p>
-                   <div slot="reference" class="name-wrapper">
-                     <el-tag size="medium">{{ row.content }}</el-tag>
-                   </div>
-                 </el-popover>
+         <span>{{ row.serious_injuries+" 人" }}</span>
        </template>
      </el-table-column>
-     <el-table-column label="创建时间" align="center">
+     <el-table-column label="死亡人数" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.death+" 人" }}</span>
+       </template>
+     </el-table-column>
+
+     <el-table-column label="提交用户" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.user_info.username }}</span>
+       </template>
+     </el-table-column>
+
+     <el-table-column label="提交时间" align="center">
        <template slot-scope="{row}">
          <span>{{ row.created_at }}</span>
        </template>
      </el-table-column>
 
-     <el-table-column label="状态" class-name="status-col" width="100">
-       <template slot-scope="{row}">
-         <el-tag  >
-           {{ row.status == 1 ? '正常':'禁用' }}
-         </el-tag>
-       </template>
-     </el-table-column>
+
      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
        <template slot-scope="{row,$index}">
         <!--  <el-button v-if="row.status =='2'" size="mini" type="success" @click="handleModifyStatus(row,'已处理')">
             已处理
           </el-button> -->
-          <el-button v-if="row.status ==1" size="mini" @click="handleModifyStatus(row,'已处理')">
-            点击禁用
-          </el-button>
-          <el-button v-if="row.status ==2" size="mini" @click="handleModifyStatus(row,'取消禁用')">
-            取消禁用
-          </el-button>
+
          <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
            删除
          </el-button>
@@ -75,7 +77,7 @@
 </template>
 
 <script>
-   import { notepadList , updateNotepad, delNotepad} from '@/api/notepad'
+   import { triageList ,  delTriage} from '@/api/triage'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -115,7 +117,7 @@
     methods: {
       getList() {
         this.listLoading = true
-        notepadList(this.listQuery).then(response => {
+        triageList(this.listQuery).then(response => {
           this.tableData = response.data.item;
           this.total = response.data.total;
           // Just to simulate the time of the request
@@ -129,24 +131,14 @@
         this.getList()
       },
 
-      handleModifyStatus(row, status) {
-        console.log(row);
-        updateNotepad(row.id,row.status).then(response => {
-          this.$message({
-            message: '操作成功',
-            type: 'success'
-          })
-          row.status = row.status==1?2:1
-        })
-      },
-      
+
       handleDelete(index, row) {
         this.$confirm('此操作将永久删除, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          delNotepad(index.id).then(response => {
+          delTriage(index.id).then(response => {
           this.$notify({
             message: '删除成功',
             type: 'success',
@@ -160,9 +152,9 @@
             message: '已取消删除'
           });
         });
-      
+
       }
-      
+
     }
   }
 </script>

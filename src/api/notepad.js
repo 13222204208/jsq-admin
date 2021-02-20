@@ -19,3 +19,10 @@ export function updateNotepad(id,status) {
     }
   })
 }
+
+export function delNotepad(id) {
+  return request({
+    url: '/notepad/'+id,
+    method: 'delete',
+  })
+}

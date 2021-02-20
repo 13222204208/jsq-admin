@@ -3,37 +3,36 @@ import request from '@/utils/request'
 
 export function storeTab(params) {
   return request({
-    url: '/consult',
+    url: '/tab',
     method: 'post',
     params: params
   })
 }
 
-export function consultList(query) {
+export function tabList() {
   return request({
-    url: '/consult',
+    url: '/tab',
     method: 'get',
-    params: query
   })
 }
 
-export function delConsult(id) {
+export function delTab(id) {
   return request({
-    url: '/consult/'+id,
+    url: '/tab/'+id,
     method: 'delete',
   })
 }
 
-export function editConsult(id) {
+export function editTab(id) {
   return request({
-    url: '/consult/'+id+'/edit',
+    url: '/tab/'+id+'/edit',
     method: 'get'
   })
 }
 
-export function updateConsult(id, params) {
+export function updateTab(id, params) {
   return request({
-    url: '/consult/'+id,
+    url: '/tab/'+id,
     method: 'patch',
     params:params
   })

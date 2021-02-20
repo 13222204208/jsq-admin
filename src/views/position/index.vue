@@ -23,19 +23,24 @@
        </template>
      </el-table-column>
 
-     <el-table-column label="标题" align="center">
+     <el-table-column label="团队名称" align="center">
        <template slot-scope="{row}">
          <span>{{ row.title }}</span>
        </template>
      </el-table-column>
-    <el-table-column label="内容" align="center">
+     <el-table-column label="付费类型" align="center">
        <template slot-scope="{row}">
-                 <el-popover trigger="hover" placement="top">
-                   <p>{{ row.content }}</p>
-                   <div slot="reference" class="name-wrapper">
-                     <el-tag size="medium">{{ row.content }}</el-tag>
-                   </div>
-                 </el-popover>
+         <span>{{ row.duration==1?"包年":"终身" }}</span>
+       </template>
+     </el-table-column>
+    <el-table-column label="创始人" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.user_info.username }}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="到期时间" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.stop_time }}</span>
        </template>
      </el-table-column>
      <el-table-column label="创建时间" align="center">
@@ -52,7 +57,7 @@
        </template>
      </el-table-column>
      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
-       <template slot-scope="{row,$index}">
+       <template slot-scope="{row}">
         <!--  <el-button v-if="row.status =='2'" size="mini" type="success" @click="handleModifyStatus(row,'已处理')">
             已处理
           </el-button> -->
@@ -62,10 +67,8 @@
           <el-button v-if="row.status ==2" size="mini" @click="handleModifyStatus(row,'取消禁用')">
             取消禁用
           </el-button>
-         <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-           删除
-         </el-button>
 
+       
        </template>
      </el-table-column>
    </el-table>
@@ -75,7 +78,7 @@
 </template>
 
 <script>
-   import { notepadList , updateNotepad, delNotepad} from '@/api/notepad'
+   import { teamList , updateTeam} from '@/api/team'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -115,7 +118,7 @@
     methods: {
       getList() {
         this.listLoading = true
-        notepadList(this.listQuery).then(response => {
+        teamList(this.listQuery).then(response => {
           this.tableData = response.data.item;
           this.total = response.data.total;
           // Just to simulate the time of the request
@@ -131,7 +134,7 @@
 
       handleModifyStatus(row, status) {
         console.log(row);
-        updateNotepad(row.id,row.status).then(response => {
+        updateTeam(row.id,row.status).then(response => {
           this.$message({
             message: '操作成功',
             type: 'success'
@@ -139,30 +142,6 @@
           row.status = row.status==1?2:1
         })
       },
-      
-      handleDelete(index, row) {
-        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          delNotepad(index.id).then(response => {
-          this.$notify({
-            message: '删除成功',
-            type: 'success',
-            duration: 3000
-          })
-          this.tableData.splice(row, 1)
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });
-        });
-      
-      }
-      
     }
   }
 </script>
