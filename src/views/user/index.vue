@@ -1,12 +1,13 @@
 <template>
  <div class="app-container">
-<!--      <div class="filter-container">
+      <div class="filter-container">
          <el-input v-model="listQuery.username" placeholder="帐号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
          <el-button v-waves class="filter-item" type="primary" style="margin-left: 10px;" icon="el-icon-search" @click="handleFilter">
            搜索
          </el-button>
 
-      </div> -->
+
+      </div>
       <br>
    <el-table
      :key="tableKey"
@@ -23,42 +24,57 @@
        </template>
      </el-table-column>
 
-     <el-table-column label="类型名称" align="center">
+     <el-table-column label="用户名" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.type_name }}</span>
+         <span>{{ row.username}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="备注" align="center">
+     <el-table-column label="姓名" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.comment }}</span>
+         <span>{{ row.name}}</span>
        </template>
      </el-table-column>
-    <el-table-column label="提交用户" align="center">
+     <el-table-column label="手机号" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.user_info.username }}</span>
+         <span>{{ row.phone}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="地址" align="center">
+     <el-table-column label="邮箱" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.address }}</span>
+         <span>{{ row.email}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="经度" align="center">
+     <el-table-column label="是否是团队创始人" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.long }}</span>
+         <span>{{ row.initiator==2?'是':'否'}}</span>
        </template>
      </el-table-column>
-     <el-table-column label="纬度" align="center">
+     <el-table-column label="组织名称" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.lat }}</span>
+         <span>{{ row.team}}</span>
        </template>
      </el-table-column>
+     <el-table-column label="医疗过敏" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.medical_allergy}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="紧急联系人手机号" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.linkman_one_phone}}</span>
+       </template>
+     </el-table-column>
+     <el-table-column label="紧急联系人名称" align="center">
+       <template slot-scope="{row}">
+         <span>{{ row.linkman_one_name}}</span>
+       </template>
+     </el-table-column>
+
      <el-table-column label="创建时间" align="center">
        <template slot-scope="{row}">
          <span>{{ row.created_at }}</span>
        </template>
      </el-table-column>
-
      <el-table-column label="状态" class-name="status-col" width="70">
        <template slot-scope="{row}">
          <el-tag  >
@@ -66,7 +82,7 @@
          </el-tag>
        </template>
      </el-table-column>
-     <el-table-column label="操作" align="center"  class-name="small-padding fixed-width">
+     <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
        <template slot-scope="{row}">
         <!--  <el-button v-if="row.status =='2'" size="mini" type="success" @click="handleModifyStatus(row,'已处理')">
             已处理
@@ -83,12 +99,11 @@
      </el-table-column>
    </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
-
 </div>
 </template>
 
 <script>
-   import { positionList , updatePosition} from '@/api/position'
+   import { userList , updateUser } from '@/api/app-user'
    import waves from '@/directive/waves' // waves directive
    import Pagination from '@/components/Pagination' // secondary package based on el-pagination
   export default {
@@ -103,14 +118,11 @@
         listQuery: {
           page: 1,
           limit: 20,
-          importance: undefined,
           username: undefined,
-          sort: '+id'
         },
         temp: {
           id: undefined,
           name: '',
-          status: '1'
         },
         dialogPvVisible: false,
         dialogFormVisible: false,
@@ -128,9 +140,11 @@
     methods: {
       getList() {
         this.listLoading = true
-        positionList(this.listQuery).then(response => {
+
+        userList(this.listQuery).then(response => {
           this.tableData = response.data.item;
           this.total = response.data.total;
+
           // Just to simulate the time of the request
           setTimeout(() => {
             this.listLoading = false
@@ -141,10 +155,19 @@
         this.listQuery.page = 1
         this.getList()
       },
+      handleUpdate(row) {
+        this.temp = Object.assign({}, row) // copy obj
+        this.dialogStatus = 'update'
+        this.dialogFormVisible = true
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
+      },
+
 
       handleModifyStatus(row, status) {
         console.log(row);
-        updatePosition(row.id,row.status).then(response => {
+        updateUser(row.id,row.status).then(response => {
           this.$message({
             message: '操作成功',
             type: 'success'
@@ -152,6 +175,30 @@
           row.status = row.status==1?2:1
         })
       },
+
+      handleDelete(index, row) {
+
+        this.$confirm('此操作将永久删除, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          delAdmin(index.id).then(response => {
+          this.$notify({
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.tableData.splice(row, 1)
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+      }
     }
   }
 </script>

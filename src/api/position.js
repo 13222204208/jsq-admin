@@ -1,18 +1,18 @@
 import request from '@/utils/request'
 
 
-export function teamList(listQuery) {
+export function positionList(listQuery) {
   return request({
-    url: '/team',
+    url: '/position',
     method: 'get',
     params: listQuery
   })
 }
 
 
-export function updateTeam(id,status) {
+export function updatePosition(id,status) {
   return request({
-    url: '/team/'+id,
+    url: '/position/'+id,
     method: 'patch',
     params:{
       status:status

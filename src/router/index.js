@@ -143,8 +143,50 @@ export const constantRoutes = [
         path: 'contact',
         name: 'Contact',
         component: () => import('@/views/contact/index'),
-        meta: { title: '联系我们', icon: 'table' }
+        meta: { title: '联系我们', icon: 'el-icon-phone' }
       }
+    ]
+  },
+
+  {
+    path: '/admin',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'AdminList',
+        component: () => import('@/views/admin/index'),
+        meta: { title: '后台帐号', icon: 'el-icon-user-solid' }
+      },
+      {
+        path: 'create',
+        name: 'CreateAdmin',
+        component: () => import('@/views/admin/create'),
+        meta: { title: '添加后台帐号', icon: 'tree' },
+        hidden: true
+      },
+
+      {
+        path: 'edit',
+        name: 'EditAdmin',
+        component: () => import('@/views/admin/edit'),
+        meta: { title: '编辑后台帐号', icon: 'tree' },
+        hidden: true
+      },
+    ]
+  },
+
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'UserList',
+        component: () => import('@/views/user/index'),
+        meta: { title: '用户列表', icon: 'el-icon-user' }
+      },
+
     ]
   },
 
@@ -156,11 +198,11 @@ export const constantRoutes = [
         path: 'list',
         name: 'Team',
         component: () => import('@/views/team/index'),
-        meta: { title: '组织团队', icon: 'table' }
+        meta: { title: '组织团队', icon: 'el-icon-s-grid' }
       }
     ]
   },
-  
+
   {
     path: '/position',
     component: Layout,
@@ -169,7 +211,7 @@ export const constantRoutes = [
         path: 'list',
         name: 'Position',
         component: () => import('@/views/position/index'),
-        meta: { title: '位置列表', icon: 'table' }
+        meta: { title: '位置列表', icon: 'el-icon-map-location' }
       }
     ]
   },
@@ -182,7 +224,7 @@ export const constantRoutes = [
         path: 'list',
         name: 'Notepad',
         component: () => import('@/views/notepad/index'),
-        meta: { title: '记事本', icon: 'table' }
+        meta: { title: '记事本', icon: 'el-icon-wallet' }
       }
     ]
   },
@@ -195,7 +237,7 @@ export const constantRoutes = [
         path: 'list',
         name: 'Triage',
         component: () => import('@/views/triage/index'),
-        meta: { title: '检伤分类', icon: 'table' }
+        meta: { title: '检伤分类', icon: 'el-icon-plus' }
       }
     ]
   },
@@ -212,6 +254,7 @@ export const constantRoutes = [
       }
     ]
   },
+
 
   {
     path: '/tab',
