@@ -23,7 +23,7 @@
       prop=""
       label="图标">
       	 <template slot-scope="scope">
-                    <img :src="'http://jsq.com/'+scope.row.icon" alt="" height="40px">
+                    <img :src="imgUrl+scope.row.icon" alt="" height="40px">
            </template>
     </el-table-column>
     <el-table-column
@@ -59,6 +59,7 @@
       return {
         tableData: [],
         listLoading: true,
+		imgUrl:''
       }
     },
     created() {
@@ -67,6 +68,10 @@
     methods: {
       getList() {
         this.listLoading = true
+		var str=process.env.VUE_APP_BASE_API;
+		var  leg= str.indexOf('api');
+		var url= str.substr(0,leg);
+		this.imgUrl= url+'/';
         tabList().then(response => {
           this.tableData = response.data;
           // Just to simulate the time of the request

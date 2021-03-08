@@ -3,23 +3,32 @@
 <el-form ref="form" :model="form" :rules="rules" label-width="80px">
 
 
-  <el-form-item label="文章标题" prop="title">
+  <el-form-item label="背景图" prop="background">
+      <el-upload
+        name="upload"
+        :action="uploadUrl()"
+        list-type="picture-card"
+        :limit='1'
+        :file-list="imgFilesList"
+        :on-success="handleUpSuccess"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove">
+        <i class="el-icon-plus"></i>
+      </el-upload>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
+
+  </el-form-item>
+  <el-form-item label="隐私标题" prop="title">
     <el-input v-model="form.title" style="width: 58rem;"></el-input>
   </el-form-item>
-  <el-form-item label="手册链接" prop="url">
-    <el-input v-model="form.url" style="width: 58rem;"></el-input>
-  </el-form-item>
-    <div class="ckeditor" style="margin-left:10px; width:1000px">
-      <!-- 工具栏容器 -->
-      <div id="toolbar-container"></div>
-      <!-- 编辑器容器 -->
-      <div id="editor">
+    <el-form-item label="隐私内容" prop="content">
+      <el-input type="textarea" v-model="form.content"></el-input>
+    </el-form-item>
 
-      </div>
-    </div>
-    <br>
   <el-form-item>
-    <el-button type="primary" @click="onSubmit">更新保存</el-button>
+    <el-button type="primary" @click="onSubmit">立即创建</el-button>
 <!--     <el-button>取消</el-button> -->
   </el-form-item>
 </el-form>
@@ -31,8 +40,8 @@
 <script>
 import CKEditor from '@ckeditor/ckeditor5-build-decoupled-document'
 import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/zh-cn'
-import { userGuide, updateUserGuide } from '@/api/user-guide'
 
+import { editPrivacy, updatePrivacy} from '@/api/team'
 export default {
   data() {
     const validateTitle = (rule, value, callback) => {
@@ -43,56 +52,70 @@ export default {
       }
     }
     return {
-      editor:null,//编辑器实例
+
       form:{
-        id:'',
         title:'',
-        url:'',
+        background:'',
         content:'',
+        id:''
       },
         rules: {
           title: [
             { required:true,validator: validateTitle, trigger: 'blur' }
           ],
-          url: [
-            { required:true,message:'请填写用户手机链接地址', trigger: 'blur' }
+          content: [
+            { required:true,message:'隐私内容必填', trigger: 'blur' }
           ],
         },
-      option:[],
       imgFilesList:[],
       dialogImageUrl: '',
-      dialogVisible: false,
-      uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img"
+      dialogVisible: false
     }
   },
   mounted() {
     this.initCKEditor()
   },
   created() {
-    this.fetchData()
+    //this.getList()
+    const id = this.$route.params && this.$route.params.id
+    this.fetchData(id)
   },
 
-
   methods: {
+   fetchData(id) {
+      editPrivacy(id).then( response=>{ console.log(response)
 
+        var str=process.env.VUE_APP_BASE_API;
+         var  leg= str.indexOf('api');
+           var url= str.substr(0,leg);
 
-    fetchData() {
-      userGuide().then(response => {console.log(response);
-        this.editor.setData(response.data.content);
+           this.imgFilesList.push({
+             "url": url+response.data.background,
+           });
+        this.form.content= response.data.content;
         this.form.title= response.data.title;
-        this.form.url= response.data.url;
-        this.form.id = response.data.id;
-      }).catch(err => {
-        console.log(err)
+      this.form.background= response.data.background
+      this.form.id= response.data.id
       })
     },
-
-
+    uploadUrl() {
+        var url = process.env.VUE_APP_BASE_API+"/upload/img"// 生产环境和开发环境的判断
+        return url
+    },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
       handlePictureCardPreview(file) { console.log(file.url)
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
       },
+      handleUpSuccess(response){
 
+          if(response.uploaded == true){
+            this.form.background = response.url;
+
+          }
+      },
 
     initCKEditor(){
       CKEditor.create(document.querySelector("#editor"),{
@@ -116,14 +139,14 @@ export default {
     },
 
     onSubmit(){
-      this.form.content = this.editor.getData();//富文本内容
 
-      updateUserGuide(this.form.id,this.form).then(response => {
+      console.log(this.form);
+      updatePrivacy(this.form.id,this.form).then(response => {
           this.$message({
             message: '更新成功',
             type: 'success'
           })
-
+        this.$router.push({name:'PrivacyList'})
         }
       );
     }

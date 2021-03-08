@@ -29,7 +29,7 @@
 <!--        <el-button type="primary"
           size="mini"
           @click="handleEdit(scope.$index, scope.row)">编辑查看</el-button> -->
-          <router-link :to="'/agreement/edit/'+scope.row.id">
+          <router-link :to="'edit/'+scope.row.id">
             <el-button type="primary" size="small" icon="el-icon-edit">
               编辑
             </el-button>

@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 
-export function storeTab(params) {
+export function storeConsult(params) {
   return request({
     url: '/consult',
     method: 'post',

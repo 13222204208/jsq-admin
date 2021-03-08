@@ -86,6 +86,34 @@ export const constantRoutes = [
   },
 
   {
+    path: '/tab-color',
+    component: Layout,
+    children: [
+      {
+        path: 'list',
+        name: 'TabColorList',
+        component: () => import('@/views/tab-color/list'),
+        meta: { title: '标记管理', icon: 'el-icon-s-unfold' }
+      },
+      {
+        path: 'create',
+        name: 'CreateTabColor',
+        component: () => import('@/views/tab-color/create'),
+        meta: { title: '添加标记', icon: 'tree' },
+        hidden: true
+      },
+
+      {
+        path: 'edit/:id(\\d+)',
+        name: 'EditTabColor',
+        component: () => import('@/views/tab-color/edit'),
+        meta: { title: '编辑标记', icon: 'tree' },
+        hidden: true
+      },
+    ]
+  },
+
+  {
     path: '/consult',
     component: Layout,
     redirect: '/consult/list',
@@ -193,13 +221,37 @@ export const constantRoutes = [
   {
     path: '/team',
     component: Layout,
+    meta: { title: '团队', icon: 'el-icon-s-check' },
     children: [
       {
         path: 'list',
         name: 'Team',
         component: () => import('@/views/team/index'),
-        meta: { title: '组织团队', icon: 'el-icon-s-grid' }
-      }
+        meta: { title: '组织团队',}
+      },
+
+      {
+        path: 'plist',
+        name: 'PrivacyList',
+        component: () => import('@/views/team/plist'),
+        meta: { title: '团队隐私', },
+      },
+
+      {
+        path: 'create-privacy',
+        name: 'CreatePrivacy',
+        component: () => import('@/views/team/create-privacy'),
+        meta: { title: '创建团队隐私', },
+        hidden:true
+      },
+
+      {
+        path: 'edit/:id(\\d+)',
+        component: () => import('@/views/team/edit-privacy'),
+        name: 'EditPrivacy',
+        meta: { title: '编辑团队隐私', noCache: true,  },
+        hidden: true
+      },
     ]
   },
 

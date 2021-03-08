@@ -4,7 +4,7 @@
   <el-form-item label="协议类型">
     <el-select v-model="form.type" placeholder="请选择协议类型" style="width: 58rem;">
       <el-option label="用户注册协议" value="register"></el-option>
-      <el-option label="开通会员服务声明" value="state"></el-option>
+      <!-- <el-option label="开通会员服务声明" value="state"></el-option> -->
     </el-select>
   </el-form-item>
     <div class="ckeditor" style="margin-left:10px; width:1000px">

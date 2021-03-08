@@ -45,12 +45,12 @@
      </el-table-column>
      <el-table-column label="经度" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.long }}</span>
+         <span>{{ row.longitude }}</span>
        </template>
      </el-table-column>
      <el-table-column label="纬度" align="center">
        <template slot-scope="{row}">
-         <span>{{ row.lat }}</span>
+         <span>{{ row.latitude }}</span>
        </template>
      </el-table-column>
      <el-table-column label="创建时间" align="center">
