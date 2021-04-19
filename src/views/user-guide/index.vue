@@ -7,8 +7,36 @@
     <el-input v-model="form.title" style="width: 58rem;"></el-input>
   </el-form-item>
   <el-form-item label="手册链接" prop="url">
-    <el-input v-model="form.url" style="width: 58rem;"></el-input>
+    <el-upload
+      class="upload-demo"
+       name="upload"
+      ref="upload"
+      :action="uploadUrl()"
+      :limit='1'
+      :on-success="handleUpSuccess"
+     >
+      <el-button size="small" type="primary">选择文件</el-button>
+    </el-upload>
   </el-form-item>
+
+
+<!--  <el-form-item label="用户手册" prop="url">
+      <el-upload
+        name="upload"
+        :action="uploadUrl()"
+        list-type="picture-card"
+        :limit='1'
+        :on-success="handleUpSuccess"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove">
+        <i class="el-icon-plus"></i>
+      </el-upload>
+      <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>
+
+  </el-form-item> -->
+
     <div class="ckeditor" style="margin-left:10px; width:1000px">
       <!-- 工具栏容器 -->
       <div id="toolbar-container"></div>
@@ -62,7 +90,7 @@ export default {
       imgFilesList:[],
       dialogImageUrl: '',
       dialogVisible: false,
-      uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img"
+     // uploadUrl:process.env.VUE_APP_BASE_API+"/upload/file"
     }
   },
   mounted() {
@@ -86,12 +114,43 @@ export default {
         console.log(err)
       })
     },
-
-
+    uploadUrl() {
+            var url = process.env.VUE_APP_BASE_API+"/upload/file"// 生产环境和开发环境的判断
+            return url
+        },
+        handleUpSuccess(response){
+        console.log(response)
+            if(response.uploaded == true){
+              this.form.url = response.url;
+              this.$message({
+                message: '上传成功',
+                type: 'success'
+              })
+            }else{
+              this.$message({
+                message: '上传失败',
+                type: 'error'
+              })
+            }
+        },
+/*    uploadUrl() {
+        var url = process.env.VUE_APP_BASE_API+"/upload/file"// 生产环境和开发环境的判断
+        return url
+    },
+      handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
       handlePictureCardPreview(file) { console.log(file.url)
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
       },
+      handleUpSuccess(response){
+
+          if(response.uploaded == true){
+            this.form.url = response.url;
+            console.log(this.form.url);
+          }
+      }, */
 
 
     initCKEditor(){
@@ -99,7 +158,7 @@ export default {
         language: 'zh-cn',
         ckfinder:{
           // 后端处理上传逻辑返回json数据,包括uploaded(选项true/false)和url两个字段
-          uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img",
+          uploadUrl:process.env.VUE_APP_BASE_API+"/upload/content/img",
         }
       }).then(editor => {console.log(editor);
         const toolbarContainer = document.querySelector('#toolbar-container');
@@ -117,7 +176,7 @@ export default {
 
     onSubmit(){
       this.form.content = this.editor.getData();//富文本内容
-
+     
       updateUserGuide(this.form.id,this.form).then(response => {
           this.$message({
             message: '更新成功',

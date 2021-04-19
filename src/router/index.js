@@ -93,7 +93,8 @@ export const constantRoutes = [
         path: 'list',
         name: 'TabColorList',
         component: () => import('@/views/tab-color/list'),
-        meta: { title: '标记管理', icon: 'el-icon-s-unfold' }
+        meta: { title: '标记管理', icon: 'el-icon-s-unfold' },
+        hidden: true
       },
       {
         path: 'create',

@@ -3,7 +3,7 @@
 <el-form ref="form" :model="form" :rules="rules" label-width="80px">
   <el-form-item label="分类名称" prop="consult_type_id">
     <el-select v-model="form.consult_type_id" placeholder="请选择分类" style="width: 58rem;">
-      <el-option v-for='item in option' :key='item.id' :value='item.id' :label='item.title'> 
+      <el-option v-for='item in option' :key='item.id' :value='item.id' :label='item.title'>
             <span style="float: left">{{ item.title }}</span> 	</el-option>
     </el-select>
   </el-form-item>
@@ -79,7 +79,7 @@ export default {
       imgFilesList:[],
       dialogImageUrl: '',
       dialogVisible: false,
-      uploadUrl:process.env.VUE_APP_BASE_API+"/upload/content/img"
+      uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img"
     }
   },
   mounted() {
@@ -104,11 +104,11 @@ export default {
       editConsult(id).then(response => {
         this.editor.setData(response.data.content);
         this.form.title= response.data.title;
-        
+
         var str=process.env.VUE_APP_BASE_API;
          var  leg= str.indexOf('api');
            var url= str.substr(0,leg);
-           
+
            this.imgFilesList.push({
              "url": url+response.data.cover,
            });
@@ -140,7 +140,7 @@ export default {
         language: 'zh-cn',
         ckfinder:{
           // 后端处理上传逻辑返回json数据,包括uploaded(选项true/false)和url两个字段
-          uploadUrl:process.env.VUE_APP_BASE_API+"/upload/img",
+          uploadUrl:process.env.VUE_APP_BASE_API+"/upload/content/img",
         }
       }).then(editor => {console.log(editor);
         const toolbarContainer = document.querySelector('#toolbar-container');

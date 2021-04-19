@@ -99,7 +99,7 @@ export default {
       })
     },
     uploadUrl() {
-        var url = process.env.VUE_APP_BASE_API+"/upload/img"// 生产环境和开发环境的判断
+        var url = process.env.VUE_APP_BASE_API+"/upload/content/img"// 生产环境和开发环境的判断
         return url
     },
       handleRemove(file, fileList) {
